@@ -7,11 +7,28 @@ import {
   SafeAreaView,
   ScrollView,
   Alert,
+  Dimensions,
+  Platform,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import api from '../config/api';
 import { useAuth } from '../context/AuthContext';
 import Sidebar from '../components/Sidebar';
+import {
+  scaleWidth,
+  scaleHeight,
+  getResponsiveFontSize,
+  getResponsivePadding,
+  getResponsiveMargin,
+  getResponsiveIconSize,
+  getResponsiveHeaderHeight,
+  getMaxContentWidth,
+  isTablet,
+  isDesktop,
+} from '../utils/responsive';
+
+// Use responsive utilities for screen width
+const getScreenWidth = () => Dimensions.get('window').width;
 
 const WorkoutManagementScreen = () => {
   const navigation = useNavigation();
@@ -103,58 +120,71 @@ const WorkoutManagementScreen = () => {
       />
 
       {/* Tabs */}
-      <View style={styles.tabsContainer}>
-        <TouchableOpacity
-          style={[styles.tab, activeTab === 'Workout' && styles.activeTab]}
-          onPress={() => setActiveTab('Workout')}
+      <View style={styles.tabsWrapper}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.tabsContainer}
         >
-          <Text
-            style={[
-              styles.tabText,
-              activeTab === 'Workout' && styles.activeTabText,
-            ]}
+          <TouchableOpacity
+            style={[styles.tab, activeTab === 'Workout' && styles.activeTab]}
+            onPress={() => setActiveTab('Workout')}
           >
-            Workout
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.tab, activeTab === 'Client' && styles.activeTab]}
-          onPress={() => setActiveTab('Client')}
-        >
-          <Text
-            style={[
-              styles.tabText,
-              activeTab === 'Client' && styles.activeTabText,
-            ]}
+            <Text
+              style={[
+                styles.tabText,
+                activeTab === 'Workout' && styles.activeTabText,
+              ]}
+            >
+              Workout
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.tab, activeTab === 'Client' && styles.activeTab]}
+            onPress={() => setActiveTab('Client')}
           >
-            Client
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.tab, activeTab === 'Availability' && styles.activeTab]}
-          onPress={() => {
-            setActiveTab('Availability');
-            navigation.navigate('SetAvailability');
-          }}
-        >
-          <Text
-            style={[
-              styles.tabText,
-              activeTab === 'Availability' && styles.activeTabText,
-            ]}
+            <Text
+              style={[
+                styles.tabText,
+                activeTab === 'Client' && styles.activeTabText,
+              ]}
+            >
+              Client
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.tab, activeTab === 'Availability' && styles.activeTab]}
+            onPress={() => {
+              setActiveTab('Availability');
+              navigation.navigate('SetAvailability');
+            }}
           >
-            Availability
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.tab, activeTab === 'BookSlots' && styles.activeTab]}
-          onPress={() => {
-            setActiveTab('BookSlots');
-            navigation.navigate('BookSlots');
-          }}
-        >
-          <Text style={styles.tabText}>Book Slots</Text>
-        </TouchableOpacity>
+            <Text
+              style={[
+                styles.tabText,
+                activeTab === 'Availability' && styles.activeTabText,
+              ]}
+            >
+              Availability
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.tab, activeTab === 'BookSlots' && styles.activeTab]}
+            onPress={() => {
+              setActiveTab('BookSlots');
+              navigation.navigate('BookSlots');
+            }}
+          >
+            <Text
+              style={[
+                styles.tabText,
+                activeTab === 'BookSlots' && styles.activeTabText,
+              ]}
+            >
+              Book Slots
+            </Text>
+          </TouchableOpacity>
+        </ScrollView>
       </View>
 
       {/* Content */}
@@ -192,134 +222,156 @@ const WorkoutManagementScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
-  header: {
-    backgroundColor: '#28A745',
-    height: 125,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingTop: 40,
-  },
-  menuButton: {
-    width: 35,
-    height: 35,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  menuIcon: {
-    color: '#FFFFFF',
-    fontSize: 24,
-  },
-  headerTitle: {
-    fontFamily: 'Poppins',
-    fontSize: 21,
-    fontWeight: '600',
-    color: '#FFFFFF',
-  },
-  headerRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 16,
-  },
-  refreshIcon: {
-    color: '#FFFFFF',
-    fontSize: 24,
-  },
-  tabsContainer: {
-    flexDirection: 'row',
-    paddingHorizontal: 25,
-    paddingTop: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#737373',
-  },
-  tab: {
-    marginRight: 30,
-    paddingBottom: 8,
-  },
-  activeTab: {
-    borderBottomWidth: 4,
-    borderBottomColor: '#28A745',
-  },
-  tabText: {
-    fontFamily: 'Poppins',
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#333333',
-  },
-  activeTabText: {
-    color: '#28A745',
-  },
-  content: {
-    flex: 1,
-    padding: 16,
-  },
-  dropdown: {
-    backgroundColor: '#F6F6F8',
-    borderRadius: 8,
-    padding: 16,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 20,
-    shadowColor: '#737373',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3,
-    elevation: 3,
-  },
-  dropdownText: {
-    fontFamily: 'Poppins',
-    fontSize: 18,
-    fontWeight: '500',
-    color: '#333333',
-  },
-  dropdownArrow: {
-    fontSize: 12,
-    color: '#333333',
-  },
-  planItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#737373',
-  },
-  planName: {
-    fontFamily: 'Poppins',
-    fontSize: 18,
-    fontWeight: '500',
-    color: '#333333',
-  },
-  deleteButton: {
-    padding: 8,
-  },
-  deleteIcon: {
-    fontSize: 20,
-  },
-  addButton: {
-    width: 45,
-    height: 45,
-    borderRadius: 22.5,
-    backgroundColor: '#28A745',
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignSelf: 'center',
-    marginTop: 20,
-    marginBottom: 40,
-  },
-  addButtonText: {
-    color: '#FFFFFF',
-    fontSize: 30,
-    fontWeight: 'bold',
-  },
-});
+const getStyles = () => {
+  const maxWidth = getMaxContentWidth();
+  const padding = getResponsivePadding();
+  const margin = getResponsiveMargin();
+  const headerHeight = getResponsiveHeaderHeight();
+  const isLargeScreen = isTablet() || isDesktop();
+  
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: '#FFFFFF',
+    },
+    header: {
+      backgroundColor: '#28A745',
+      height: scaleHeight(headerHeight),
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: getResponsivePadding(16),
+      paddingTop: Platform.OS === 'ios' ? scaleHeight(40) : scaleHeight(10),
+    },
+    menuButton: {
+      width: scaleWidth(35),
+      height: scaleWidth(35),
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    menuIcon: {
+      color: '#FFFFFF',
+      fontSize: getResponsiveIconSize(24),
+    },
+    headerTitle: {
+      fontFamily: 'Poppins',
+      fontSize: getResponsiveFontSize(21),
+      fontWeight: '600',
+      color: '#FFFFFF',
+    },
+    headerRight: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: scaleWidth(16),
+    },
+    refreshIcon: {
+      color: '#FFFFFF',
+      fontSize: getResponsiveIconSize(24),
+    },
+    tabsWrapper: {
+      borderBottomWidth: 1,
+      borderBottomColor: '#737373',
+    },
+    tabsContainer: {
+      flexDirection: 'row',
+      paddingLeft: getResponsivePadding(20),
+      paddingRight: getResponsivePadding(20),
+      paddingTop: getResponsivePadding(20),
+      paddingBottom: scaleHeight(8),
+      alignItems: 'center',
+      minHeight: scaleHeight(50),
+    },
+    tab: {
+      marginRight: scaleWidth(25),
+      paddingBottom: scaleHeight(8),
+      paddingHorizontal: scaleWidth(8),
+      minWidth: scaleWidth(60),
+    },
+    activeTab: {
+      borderBottomWidth: scaleHeight(4),
+      borderBottomColor: '#28A745',
+    },
+    tabText: {
+      fontFamily: 'Poppins',
+      fontSize: getResponsiveFontSize(18),
+      fontWeight: '600',
+      color: '#333333',
+    },
+    activeTabText: {
+      color: '#28A745',
+    },
+    content: {
+      flex: 1,
+      padding: padding,
+      maxWidth: isLargeScreen ? maxWidth : getScreenWidth(),
+      alignSelf: isLargeScreen ? 'center' : 'stretch',
+      width: '100%',
+    },
+    dropdown: {
+      backgroundColor: '#F6F6F8',
+      borderRadius: scaleWidth(8),
+      padding: padding,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: margin,
+      shadowColor: '#737373',
+      shadowOffset: { width: 0, height: scaleHeight(3) },
+      shadowOpacity: 0.25,
+      shadowRadius: scaleWidth(3),
+      elevation: 3,
+    },
+    dropdownText: {
+      fontFamily: 'Poppins',
+      fontSize: getResponsiveFontSize(18),
+      fontWeight: '500',
+      color: '#333333',
+    },
+    dropdownArrow: {
+      fontSize: getResponsiveFontSize(12),
+      color: '#333333',
+    },
+    planItem: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingVertical: scaleHeight(12),
+      borderBottomWidth: 1,
+      borderBottomColor: '#737373',
+    },
+    planName: {
+      fontFamily: 'Poppins',
+      fontSize: getResponsiveFontSize(18),
+      fontWeight: '500',
+      color: '#333333',
+      flex: 1,
+    },
+    deleteButton: {
+      padding: scaleWidth(8),
+    },
+    deleteIcon: {
+      fontSize: getResponsiveIconSize(20),
+    },
+    addButton: {
+      width: scaleWidth(45),
+      height: scaleWidth(45),
+      borderRadius: scaleWidth(22.5),
+      backgroundColor: '#28A745',
+      justifyContent: 'center',
+      alignItems: 'center',
+      alignSelf: 'center',
+      marginTop: margin,
+      marginBottom: margin * 2,
+    },
+    addButtonText: {
+      color: '#FFFFFF',
+      fontSize: getResponsiveFontSize(30),
+      fontWeight: 'bold',
+    },
+  });
+};
+
+const styles = getStyles();
 
 export default WorkoutManagementScreen;
 

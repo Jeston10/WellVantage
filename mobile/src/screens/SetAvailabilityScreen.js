@@ -10,12 +10,28 @@ import {
   Alert,
   Platform,
   Modal,
+  Dimensions,
 } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useNavigation } from '@react-navigation/native';
 import api from '../config/api';
 import Sidebar from '../components/Sidebar';
+import {
+  scaleWidth,
+  scaleHeight,
+  getResponsiveFontSize,
+  getResponsivePadding,
+  getResponsiveMargin,
+  getResponsiveIconSize,
+  getResponsiveHeaderHeight,
+  getMaxContentWidth,
+  isTablet,
+  isDesktop,
+} from '../utils/responsive';
+
+// Use responsive utilities for screen width
+const getScreenWidth = () => Dimensions.get('window').width;
 
 const SetAvailabilityScreen = () => {
   const navigation = useNavigation();
@@ -147,71 +163,77 @@ const SetAvailabilityScreen = () => {
       />
 
       {/* Navigation Tabs */}
-      <View style={styles.tabsContainer}>
-        <TouchableOpacity
-          style={[styles.tab, activeTab === 'Workout' && styles.activeTab]}
-          onPress={() => {
-            setActiveTab('Workout');
-            navigation.navigate('WorkoutManagement');
-          }}
+      <View style={styles.tabsWrapper}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.tabsContainer}
         >
-          <Text
-            style={[
-              styles.tabText,
-              activeTab === 'Workout' && styles.activeTabText,
-            ]}
+          <TouchableOpacity
+            style={[styles.tab, activeTab === 'Workout' && styles.activeTab]}
+            onPress={() => {
+              setActiveTab('Workout');
+              navigation.navigate('WorkoutManagement');
+            }}
           >
-            Workout
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.tab, activeTab === 'Client' && styles.activeTab]}
-          onPress={() => {
-            setActiveTab('Client');
-            navigation.navigate('WorkoutManagement');
-          }}
-        >
-          <Text
-            style={[
-              styles.tabText,
-              activeTab === 'Client' && styles.activeTabText,
-            ]}
+            <Text
+              style={[
+                styles.tabText,
+                activeTab === 'Workout' && styles.activeTabText,
+              ]}
+            >
+              Workout
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.tab, activeTab === 'Client' && styles.activeTab]}
+            onPress={() => {
+              setActiveTab('Client');
+              navigation.navigate('WorkoutManagement');
+            }}
           >
-            Client
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.tab, activeTab === 'Availability' && styles.activeTab]}
-          onPress={() => setActiveTab('Availability')}
-        >
-          <Text
-            style={[
-              styles.tabText,
-              activeTab === 'Availability' && styles.activeTabText,
-            ]}
+            <Text
+              style={[
+                styles.tabText,
+                activeTab === 'Client' && styles.activeTabText,
+              ]}
+            >
+              Client
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.tab, activeTab === 'Availability' && styles.activeTab]}
+            onPress={() => setActiveTab('Availability')}
           >
-            Availability
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.tab, activeTab === 'BookSlots' && styles.activeTab]}
-          onPress={() => {
-            setActiveTab('BookSlots');
-            navigation.navigate('BookSlots');
-          }}
-        >
-          <Text
-            style={[
-              styles.tabText,
-              activeTab === 'BookSlots' && styles.activeTabText,
-            ]}
+            <Text
+              style={[
+                styles.tabText,
+                activeTab === 'Availability' && styles.activeTabText,
+              ]}
+            >
+              Availability
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.tab, activeTab === 'BookSlots' && styles.activeTab]}
+            onPress={() => {
+              setActiveTab('BookSlots');
+              navigation.navigate('BookSlots');
+            }}
           >
-            Book Slots
-          </Text>
-        </TouchableOpacity>
+            <Text
+              style={[
+                styles.tabText,
+                activeTab === 'BookSlots' && styles.activeTabText,
+              ]}
+            >
+              Book Slots
+            </Text>
+          </TouchableOpacity>
+        </ScrollView>
       </View>
 
-      <ScrollView style={styles.content}>
+      <ScrollView style={[styles.content, (isTablet() || isDesktop()) && { maxWidth: getMaxContentWidth(), alignSelf: 'center', width: '100%' }]}>
         <Text style={styles.title}>Set Availability</Text>
 
         {/* Date Input */}
@@ -485,225 +507,243 @@ const SetAvailabilityScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
-  header: {
-    backgroundColor: '#28A745',
-    height: 60,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-  },
-  menuButton: {
-    width: 35,
-    height: 35,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  menuIcon: {
-    color: '#FFFFFF',
-    fontSize: 24,
-  },
-  headerTitle: {
-    fontFamily: 'Poppins',
-    fontSize: 21,
-    fontWeight: '600',
-    color: '#FFFFFF',
-  },
-  refreshIcon: {
-    color: '#FFFFFF',
-    fontSize: 24,
-  },
-  tabsContainer: {
-    flexDirection: 'row',
-    paddingHorizontal: 25,
-    paddingTop: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#737373',
-  },
-  tab: {
-    marginRight: 30,
-    paddingBottom: 8,
-  },
-  activeTab: {
-    borderBottomWidth: 4,
-    borderBottomColor: '#28A745',
-  },
-  tabText: {
-    fontFamily: 'Poppins',
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#333333',
-  },
-  activeTabText: {
-    fontFamily: 'Poppins',
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#28A745',
-  },
-  content: {
-    flex: 1,
-    padding: 16,
-  },
-  title: {
-    fontFamily: 'Poppins',
-    fontSize: 24,
-    fontWeight: '600',
-    color: '#333333',
-    marginBottom: 20,
-  },
-  inputGroup: {
-    marginBottom: 20,
-  },
-  label: {
-    fontFamily: 'Poppins',
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#333333',
-    marginBottom: 8,
-  },
-  input: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#D9D9D9',
-    padding: 12,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  inputText: {
-    fontFamily: 'Poppins',
-    fontSize: 15,
-    color: '#333333',
-  },
-  calendarIcon: {
-    fontSize: 20,
-  },
-  timeInputsContainer: {
-    flexDirection: 'row',
-    gap: 10,
-    marginBottom: 20,
-  },
-  timeInputGroup: {
-    flex: 1,
-  },
-  toggleContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  toggle: {
-    width: 50,
-    height: 30,
-    borderRadius: 15,
-    backgroundColor: '#D9D9D9',
-    justifyContent: 'center',
-    paddingHorizontal: 2,
-  },
-  toggleActive: {
-    backgroundColor: '#28A745',
-  },
-  toggleCircle: {
-    width: 26,
-    height: 26,
-    borderRadius: 13,
-    backgroundColor: '#FFFFFF',
-  },
-  toggleCircleActive: {
-    alignSelf: 'flex-end',
-  },
-  selectedDatesContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 15,
-    padding: 12,
-    backgroundColor: '#E8F5E9',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#28A745',
-  },
-  selectedDatesText: {
-    fontFamily: 'Poppins',
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#28A745',
-  },
-  clearButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: '#28A745',
-  },
-  clearButtonText: {
-    fontFamily: 'Poppins',
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#28A745',
-  },
-  calendarContainer: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#D9D9D9',
-    padding: 10,
-    marginBottom: 20,
-  },
-  createButtonDisabled: {
-    opacity: 0.6,
-  },
-  createButton: {
-    backgroundColor: '#28A745',
-    borderRadius: 15,
-    padding: 15,
-    alignItems: 'center',
-    marginBottom: 40,
-  },
-  createButtonText: {
-    fontFamily: 'Poppins',
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#FFFFFF',
-  },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
-  },
-  modalContent: {
-    backgroundColor: '#FFFFFF',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    paddingBottom: 20,
-  },
-  modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
-  },
-  modalCancel: {
-    fontFamily: 'Poppins',
-    fontSize: 16,
-    color: '#737373',
-  },
-  modalDone: {
-    fontFamily: 'Poppins',
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#28A745',
-  },
-});
+const getStyles = () => {
+  const padding = getResponsivePadding();
+  const margin = getResponsiveMargin();
+  const headerHeight = getResponsiveHeaderHeight();
+  const isLargeScreen = isTablet() || isDesktop();
+  
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: '#FFFFFF',
+    },
+    header: {
+      backgroundColor: '#28A745',
+      height: headerHeight,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: getResponsivePadding(16),
+    },
+    menuButton: {
+      width: scaleWidth(35),
+      height: scaleWidth(35),
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    menuIcon: {
+      color: '#FFFFFF',
+      fontSize: getResponsiveIconSize(24),
+    },
+    headerTitle: {
+      fontFamily: 'Poppins',
+      fontSize: getResponsiveFontSize(21),
+      fontWeight: '600',
+      color: '#FFFFFF',
+    },
+    refreshIcon: {
+      color: '#FFFFFF',
+      fontSize: getResponsiveIconSize(24),
+    },
+    tabsWrapper: {
+      borderBottomWidth: 1,
+      borderBottomColor: '#737373',
+    },
+    tabsContainer: {
+      flexDirection: 'row',
+      paddingLeft: getResponsivePadding(20),
+      paddingRight: getResponsivePadding(20),
+      paddingTop: getResponsivePadding(20),
+      paddingBottom: scaleHeight(8),
+      alignItems: 'center',
+      minHeight: scaleHeight(50),
+    },
+    tab: {
+      marginRight: scaleWidth(25),
+      paddingBottom: scaleHeight(8),
+      paddingHorizontal: scaleWidth(8),
+      minWidth: scaleWidth(60),
+    },
+    activeTab: {
+      borderBottomWidth: scaleHeight(4),
+      borderBottomColor: '#28A745',
+    },
+    tabText: {
+      fontFamily: 'Poppins',
+      fontSize: getResponsiveFontSize(18),
+      fontWeight: '600',
+      color: '#333333',
+    },
+    activeTabText: {
+      fontFamily: 'Poppins',
+      fontSize: getResponsiveFontSize(18),
+      fontWeight: '600',
+      color: '#28A745',
+    },
+    content: {
+      flex: 1,
+      padding: padding,
+    },
+    title: {
+      fontFamily: 'Poppins',
+      fontSize: getResponsiveFontSize(24),
+      fontWeight: '600',
+      color: '#333333',
+      marginBottom: margin * 1.25,
+    },
+    inputGroup: {
+      marginBottom: margin * 1.25,
+    },
+    label: {
+      fontFamily: 'Poppins',
+      fontSize: getResponsiveFontSize(16),
+      fontWeight: '500',
+      color: '#333333',
+      marginBottom: scaleHeight(8),
+    },
+    input: {
+      backgroundColor: '#FFFFFF',
+      borderRadius: scaleWidth(8),
+      borderWidth: 1,
+      borderColor: '#D9D9D9',
+      padding: padding * 0.75,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+    },
+    inputText: {
+      fontFamily: 'Poppins',
+      fontSize: getResponsiveFontSize(15),
+      color: '#333333',
+    },
+    calendarIcon: {
+      fontSize: getResponsiveIconSize(20),
+    },
+    timeInputsContainer: {
+      flexDirection: isLargeScreen ? 'row' : 'column',
+      gap: scaleWidth(10),
+      marginBottom: margin * 1.25,
+    },
+    timeInputGroup: {
+      flex: isLargeScreen ? 1 : 0,
+    },
+    toggleContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: margin * 1.25,
+    },
+    toggle: {
+      width: scaleWidth(50),
+      height: scaleHeight(30),
+      borderRadius: scaleWidth(15),
+      backgroundColor: '#D9D9D9',
+      justifyContent: 'center',
+      paddingHorizontal: scaleWidth(2),
+    },
+    toggleActive: {
+      backgroundColor: '#28A745',
+    },
+    toggleCircle: {
+      width: scaleWidth(26),
+      height: scaleWidth(26),
+      borderRadius: scaleWidth(13),
+      backgroundColor: '#FFFFFF',
+    },
+    toggleCircleActive: {
+      alignSelf: 'flex-end',
+    },
+    selectedDatesContainer: {
+      flexDirection: isLargeScreen ? 'row' : 'column',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: margin,
+      padding: padding * 0.75,
+      backgroundColor: '#E8F5E9',
+      borderRadius: scaleWidth(8),
+      borderWidth: 1,
+      borderColor: '#28A745',
+      gap: scaleWidth(10),
+    },
+    selectedDatesText: {
+      fontFamily: 'Poppins',
+      fontSize: getResponsiveFontSize(16),
+      fontWeight: '500',
+      color: '#28A745',
+    },
+    clearButton: {
+      paddingHorizontal: padding * 0.75,
+      paddingVertical: scaleHeight(6),
+      backgroundColor: '#FFFFFF',
+      borderRadius: scaleWidth(6),
+      borderWidth: 1,
+      borderColor: '#28A745',
+    },
+    clearButtonText: {
+      fontFamily: 'Poppins',
+      fontSize: getResponsiveFontSize(14),
+      fontWeight: '500',
+      color: '#28A745',
+    },
+    calendarContainer: {
+      backgroundColor: '#FFFFFF',
+      borderRadius: scaleWidth(8),
+      borderWidth: 1,
+      borderColor: '#D9D9D9',
+      padding: padding * 0.625,
+      marginBottom: margin * 1.25,
+    },
+    createButtonDisabled: {
+      opacity: 0.6,
+    },
+    createButton: {
+      backgroundColor: '#28A745',
+      borderRadius: scaleWidth(15),
+      padding: padding * 0.9375,
+      alignItems: 'center',
+      marginBottom: margin * 2.5,
+    },
+    createButtonText: {
+      fontFamily: 'Poppins',
+      fontSize: getResponsiveFontSize(18),
+      fontWeight: '600',
+      color: '#FFFFFF',
+    },
+    modalOverlay: {
+      flex: 1,
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      justifyContent: 'flex-end',
+    },
+    modalContent: {
+      backgroundColor: '#FFFFFF',
+      borderTopLeftRadius: scaleWidth(20),
+      borderTopRightRadius: scaleWidth(20),
+      paddingBottom: margin * 1.25,
+    },
+    modalHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      padding: padding,
+      borderBottomWidth: 1,
+      borderBottomColor: '#E0E0E0',
+    },
+    modalCancel: {
+      fontFamily: 'Poppins',
+      fontSize: getResponsiveFontSize(16),
+      color: '#737373',
+    },
+    modalDone: {
+      fontFamily: 'Poppins',
+      fontSize: getResponsiveFontSize(16),
+      fontWeight: '600',
+      color: '#28A745',
+    },
+  });
+};
+
+const styles = getStyles();
 
 export default SetAvailabilityScreen;
 

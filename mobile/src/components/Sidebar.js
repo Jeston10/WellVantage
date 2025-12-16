@@ -11,16 +11,36 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useAuth } from '../context/AuthContext';
+import {
+  scaleWidth,
+  scaleHeight,
+  getResponsiveFontSize,
+  getResponsivePadding,
+  getResponsiveMargin,
+  getResponsiveIconSize,
+  isTablet,
+  isDesktop,
+} from '../utils/responsive';
 
 const { width } = Dimensions.get('window');
-const SIDEBAR_WIDTH = width * 0.75; // 75% of screen width
+const getSidebarWidth = () => {
+  if (isDesktop()) {
+    return width * 0.4; // 40% for desktop
+  }
+  if (isTablet()) {
+    return width * 0.6; // 60% for tablet
+  }
+  return width * 0.75; // 75% for phone
+};
 
 const Sidebar = ({ visible, onClose }) => {
   const navigation = useNavigation();
   const { user, signOut } = useAuth();
-  const slideAnim = React.useRef(new Animated.Value(-SIDEBAR_WIDTH)).current;
+  const sidebarWidth = getSidebarWidth();
+  const slideAnim = React.useRef(new Animated.Value(-sidebarWidth)).current;
 
   React.useEffect(() => {
+    const currentWidth = getSidebarWidth();
     if (visible) {
       Animated.timing(slideAnim, {
         toValue: 0,
@@ -29,7 +49,7 @@ const Sidebar = ({ visible, onClose }) => {
       }).start();
     } else {
       Animated.timing(slideAnim, {
-        toValue: -SIDEBAR_WIDTH,
+        toValue: -currentWidth,
         duration: 300,
         useNativeDriver: true,
       }).start();
@@ -153,125 +173,133 @@ const Sidebar = ({ visible, onClose }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'row',
-  },
-  backdrop: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  sidebar: {
-    width: SIDEBAR_WIDTH,
-    height: '100%',
-    backgroundColor: '#FFFFFF',
-    shadowColor: '#000',
-    shadowOffset: { width: 2, height: 0 },
-    shadowOpacity: 0.25,
-    shadowRadius: 10,
-    elevation: 10,
-  },
-  header: {
-    backgroundColor: '#28A745',
-    paddingTop: 50,
-    paddingBottom: 20,
-    paddingHorizontal: 16,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-  },
-  userInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-  avatar: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    backgroundColor: '#FFFFFF',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-  },
-  avatarText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#28A745',
-  },
-  userDetails: {
-    flex: 1,
-  },
-  userName: {
-    fontFamily: 'Poppins',
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#FFFFFF',
-    marginBottom: 4,
-  },
-  userEmail: {
-    fontFamily: 'Poppins',
-    fontSize: 12,
-    color: '#FFFFFF',
-    opacity: 0.9,
-  },
-  closeButton: {
-    width: 30,
-    height: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  closeIcon: {
-    color: '#FFFFFF',
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
-  menuContainer: {
-    flex: 1,
-    paddingTop: 20,
-  },
-  menuItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 16,
-    paddingHorizontal: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
-  },
-  menuIcon: {
-    fontSize: 24,
-    marginRight: 16,
-  },
-  menuLabel: {
-    fontFamily: 'Poppins',
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#333333',
-  },
-  footer: {
-    padding: 20,
-    borderTopWidth: 1,
-    borderTopColor: '#E0E0E0',
-  },
-  logoutButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#DC3545',
-    paddingVertical: 14,
-    borderRadius: 8,
-  },
-  logoutIcon: {
-    fontSize: 20,
-    marginRight: 8,
-  },
-  logoutText: {
-    fontFamily: 'Poppins',
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#FFFFFF',
-  },
-});
+const getStyles = () => {
+  const padding = getResponsivePadding();
+  const margin = getResponsiveMargin();
+  const sidebarWidth = getSidebarWidth();
+  
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      flexDirection: 'row',
+    },
+    backdrop: {
+      flex: 1,
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    sidebar: {
+      width: sidebarWidth,
+      height: '100%',
+      backgroundColor: '#FFFFFF',
+      shadowColor: '#000',
+      shadowOffset: { width: scaleWidth(2), height: 0 },
+      shadowOpacity: 0.25,
+      shadowRadius: scaleWidth(10),
+      elevation: 10,
+    },
+    header: {
+      backgroundColor: '#28A745',
+      paddingTop: scaleHeight(50),
+      paddingBottom: margin * 1.25,
+      paddingHorizontal: padding,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'flex-start',
+    },
+    userInfo: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      flex: 1,
+    },
+    avatar: {
+      width: scaleWidth(50),
+      height: scaleWidth(50),
+      borderRadius: scaleWidth(25),
+      backgroundColor: '#FFFFFF',
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginRight: scaleWidth(12),
+    },
+    avatarText: {
+      fontSize: getResponsiveFontSize(20),
+      fontWeight: 'bold',
+      color: '#28A745',
+    },
+    userDetails: {
+      flex: 1,
+    },
+    userName: {
+      fontFamily: 'Poppins',
+      fontSize: getResponsiveFontSize(18),
+      fontWeight: '600',
+      color: '#FFFFFF',
+      marginBottom: scaleHeight(4),
+    },
+    userEmail: {
+      fontFamily: 'Poppins',
+      fontSize: getResponsiveFontSize(12),
+      color: '#FFFFFF',
+      opacity: 0.9,
+    },
+    closeButton: {
+      width: scaleWidth(30),
+      height: scaleWidth(30),
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    closeIcon: {
+      color: '#FFFFFF',
+      fontSize: getResponsiveIconSize(24),
+      fontWeight: 'bold',
+    },
+    menuContainer: {
+      flex: 1,
+      paddingTop: margin * 1.25,
+    },
+    menuItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: scaleHeight(16),
+      paddingHorizontal: margin * 1.25,
+      borderBottomWidth: 1,
+      borderBottomColor: '#E0E0E0',
+    },
+    menuIcon: {
+      fontSize: getResponsiveIconSize(24),
+      marginRight: scaleWidth(16),
+    },
+    menuLabel: {
+      fontFamily: 'Poppins',
+      fontSize: getResponsiveFontSize(16),
+      fontWeight: '500',
+      color: '#333333',
+    },
+    footer: {
+      padding: margin * 1.25,
+      borderTopWidth: 1,
+      borderTopColor: '#E0E0E0',
+    },
+    logoutButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: '#DC3545',
+      paddingVertical: scaleHeight(14),
+      borderRadius: scaleWidth(8),
+    },
+    logoutIcon: {
+      fontSize: getResponsiveIconSize(20),
+      marginRight: scaleWidth(8),
+    },
+    logoutText: {
+      fontFamily: 'Poppins',
+      fontSize: getResponsiveFontSize(16),
+      fontWeight: '600',
+      color: '#FFFFFF',
+    },
+  });
+};
+
+const styles = getStyles();
 
 export default Sidebar;

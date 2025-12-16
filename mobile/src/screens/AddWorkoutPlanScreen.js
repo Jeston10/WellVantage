@@ -8,9 +8,26 @@ import {
   SafeAreaView,
   ScrollView,
   Alert,
+  Dimensions,
+  Platform,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import api from '../config/api';
+import {
+  scaleWidth,
+  scaleHeight,
+  getResponsiveFontSize,
+  getResponsivePadding,
+  getResponsiveMargin,
+  getResponsiveIconSize,
+  getResponsiveHeaderHeight,
+  getMaxContentWidth,
+  isTablet,
+  isDesktop,
+} from '../utils/responsive';
+
+// Use responsive utilities for screen width
+const getScreenWidth = () => Dimensions.get('window').width;
 
 const AddWorkoutPlanScreen = () => {
   const navigation = useNavigation();
@@ -189,7 +206,7 @@ const AddWorkoutPlanScreen = () => {
         </View>
       </View>
 
-      <ScrollView style={styles.content}>
+      <ScrollView style={[styles.content, (isTablet() || isDesktop()) && { maxWidth: getMaxContentWidth(), alignSelf: 'center', width: '100%' }]}>
         {/* Plan Name */}
         <TextInput
           style={styles.planNameInput}
@@ -323,274 +340,284 @@ const AddWorkoutPlanScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
-  header: {
-    backgroundColor: '#28A745',
-    height: 125,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingTop: 40,
-  },
-  menuButton: {
-    width: 35,
-    height: 35,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  menuIcon: {
-    color: '#FFFFFF',
-    fontSize: 24,
-  },
-  headerTitle: {
-    fontFamily: 'Poppins',
-    fontSize: 21,
-    fontWeight: '600',
-    color: '#FFFFFF',
-  },
-  refreshIcon: {
-    color: '#FFFFFF',
-    fontSize: 24,
-  },
-  tabsContainer: {
-    flexDirection: 'row',
-    paddingHorizontal: 25,
-    paddingTop: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#737373',
-  },
-  tab: {
-    marginRight: 30,
-    paddingBottom: 8,
-  },
-  tabText: {
-    fontFamily: 'Poppins',
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#333333',
-  },
-  activeTabText: {
-    fontFamily: 'Poppins',
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#28A745',
-  },
-  content: {
-    flex: 1,
-    padding: 16,
-  },
-  planNameInput: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#D9D9D9',
-    padding: 12,
-    marginBottom: 20,
-    fontFamily: 'Poppins',
-    fontSize: 18,
-  },
-  daySelector: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginBottom: 20,
-  },
-  dayButtonContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 10,
-    marginRight: 10,
-  },
-  dayButton: {
-    backgroundColor: '#28A745',
-    borderTopLeftRadius: 25,
-    borderBottomLeftRadius: 25,
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-  },
-  activeDayButton: {
-    backgroundColor: '#28A745',
-  },
-  dayButtonText: {
-    fontFamily: 'Poppins',
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#FFFFFF',
-  },
-  activeDayButtonText: {
-    color: '#FFFFFF',
-  },
-  dayNameInput: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#D9D9D9',
-    padding: 12,
-    flex: 1,
-    marginLeft: 10,
-    fontFamily: 'Poppins',
-    fontSize: 18,
-  },
-  deleteDayButton: {
-    padding: 8,
-    marginLeft: 10,
-  },
-  addDayButton: {
-    width: 45,
-    height: 45,
-    borderRadius: 22.5,
-    backgroundColor: '#28A745',
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignSelf: 'center',
-    marginVertical: 20,
-  },
-  addButtonText: {
-    color: '#FFFFFF',
-    fontSize: 30,
-    fontWeight: 'bold',
-  },
-  exerciseInputContainer: {
-    flexDirection: 'row',
-    marginBottom: 20,
-    gap: 10,
-  },
-  exerciseNameInput: {
-    flex: 2,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#D9D9D9',
-    padding: 12,
-    fontFamily: 'Poppins',
-    fontSize: 15,
-  },
-  setsRepsInput: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#D9D9D9',
-    padding: 12,
-    fontFamily: 'Poppins',
-    fontSize: 15,
-  },
-  addExerciseButton: {
-    backgroundColor: '#28A745',
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    justifyContent: 'center',
-  },
-  addExerciseButtonText: {
-    color: '#FFFFFF',
-    fontFamily: 'Poppins',
-    fontSize: 15,
-    fontWeight: '600',
-  },
-  exercisesList: {
-    marginBottom: 20,
-  },
-  exerciseHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#737373',
-  },
-  exerciseHeaderText: {
-    fontFamily: 'Poppins',
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#333333',
-    flex: 1,
-  },
-  exerciseRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: '#737373',
-  },
-  exerciseName: {
-    fontFamily: 'Poppins',
-    fontSize: 18,
-    fontWeight: '500',
-    color: '#333333',
-    flex: 1,
-  },
-  setsRepsBox: {
-    backgroundColor: '#FFFFFF',
-    borderWidth: 1,
-    borderColor: '#28A745',
-    borderRadius: 5,
-    padding: 8,
-    marginHorizontal: 5,
-    minWidth: 50,
-  },
-  setsRepsText: {
-    fontFamily: 'Poppins',
-    fontSize: 15,
-    fontWeight: '600',
-    color: '#737373',
-    textAlign: 'center',
-  },
-  deleteExerciseButton: {
-    padding: 8,
-  },
-  deleteIcon: {
-    fontSize: 20,
-  },
-  addExerciseIconButton: {
-    width: 45,
-    height: 45,
-    borderRadius: 22.5,
-    backgroundColor: '#28A745',
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignSelf: 'center',
-    marginVertical: 20,
-  },
-  notesContainer: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#D9D9D9',
-    padding: 16,
-    marginBottom: 20,
-    minHeight: 160,
-  },
-  notesInput: {
-    fontFamily: 'Poppins',
-    fontSize: 15,
-    color: '#737373',
-    minHeight: 100,
-    textAlignVertical: 'top',
-  },
-  wordsRemaining: {
-    fontFamily: 'Poppins',
-    fontSize: 15,
-    color: '#FF9933',
-    textAlign: 'right',
-    marginTop: 10,
-  },
-  submitButton: {
-    backgroundColor: '#28A745',
-    borderRadius: 15,
-    padding: 15,
-    alignItems: 'center',
-    marginBottom: 40,
-  },
-  submitButtonText: {
-    fontFamily: 'Roboto Flex',
-    fontSize: 25,
-    fontWeight: '600',
-    color: '#FFFFFF',
-  },
-});
+const getStyles = () => {
+  const padding = getResponsivePadding();
+  const margin = getResponsiveMargin();
+  const headerHeight = getResponsiveHeaderHeight();
+  const isLargeScreen = isTablet() || isDesktop();
+  
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: '#FFFFFF',
+    },
+    header: {
+      backgroundColor: '#28A745',
+      height: scaleHeight(headerHeight + 65),
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: getResponsivePadding(16),
+      paddingTop: Platform.OS === 'ios' ? scaleHeight(40) : scaleHeight(10),
+    },
+    menuButton: {
+      width: scaleWidth(35),
+      height: scaleWidth(35),
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    menuIcon: {
+      color: '#FFFFFF',
+      fontSize: getResponsiveIconSize(24),
+    },
+    headerTitle: {
+      fontFamily: 'Poppins',
+      fontSize: getResponsiveFontSize(21),
+      fontWeight: '600',
+      color: '#FFFFFF',
+    },
+    refreshIcon: {
+      color: '#FFFFFF',
+      fontSize: getResponsiveIconSize(24),
+    },
+    tabsContainer: {
+      flexDirection: 'row',
+      paddingHorizontal: getResponsivePadding(25),
+      paddingTop: getResponsivePadding(20),
+      borderBottomWidth: 1,
+      borderBottomColor: '#737373',
+      flexWrap: isLargeScreen ? 'wrap' : 'nowrap',
+    },
+    tab: {
+      marginRight: scaleWidth(30),
+      paddingBottom: scaleHeight(8),
+    },
+    tabText: {
+      fontFamily: 'Poppins',
+      fontSize: getResponsiveFontSize(18),
+      fontWeight: '600',
+      color: '#333333',
+    },
+    activeTabText: {
+      fontFamily: 'Poppins',
+      fontSize: getResponsiveFontSize(18),
+      fontWeight: '600',
+      color: '#28A745',
+    },
+    content: {
+      flex: 1,
+      padding: padding,
+    },
+    planNameInput: {
+      backgroundColor: '#FFFFFF',
+      borderRadius: scaleWidth(8),
+      borderWidth: 1,
+      borderColor: '#D9D9D9',
+      padding: padding * 0.75,
+      marginBottom: margin * 1.25,
+      fontFamily: 'Poppins',
+      fontSize: getResponsiveFontSize(18),
+    },
+    daySelector: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      marginBottom: margin * 1.25,
+    },
+    dayButtonContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: margin * 0.625,
+      marginRight: scaleWidth(10),
+    },
+    dayButton: {
+      backgroundColor: '#28A745',
+      borderTopLeftRadius: scaleWidth(25),
+      borderBottomLeftRadius: scaleWidth(25),
+      paddingHorizontal: padding * 1.25,
+      paddingVertical: scaleHeight(12),
+    },
+    activeDayButton: {
+      backgroundColor: '#28A745',
+    },
+    dayButtonText: {
+      fontFamily: 'Poppins',
+      fontSize: getResponsiveFontSize(18),
+      fontWeight: '600',
+      color: '#FFFFFF',
+    },
+    activeDayButtonText: {
+      color: '#FFFFFF',
+    },
+    dayNameInput: {
+      backgroundColor: '#FFFFFF',
+      borderRadius: scaleWidth(8),
+      borderWidth: 1,
+      borderColor: '#D9D9D9',
+      padding: padding * 0.75,
+      flex: 1,
+      marginLeft: scaleWidth(10),
+      fontFamily: 'Poppins',
+      fontSize: getResponsiveFontSize(18),
+    },
+    deleteDayButton: {
+      padding: scaleWidth(8),
+      marginLeft: scaleWidth(10),
+    },
+    addDayButton: {
+      width: scaleWidth(45),
+      height: scaleWidth(45),
+      borderRadius: scaleWidth(22.5),
+      backgroundColor: '#28A745',
+      justifyContent: 'center',
+      alignItems: 'center',
+      alignSelf: 'center',
+      marginVertical: margin * 1.25,
+    },
+    addButtonText: {
+      color: '#FFFFFF',
+      fontSize: getResponsiveFontSize(30),
+      fontWeight: 'bold',
+    },
+    exerciseInputContainer: {
+      flexDirection: isLargeScreen ? 'row' : 'column',
+      marginBottom: margin * 1.25,
+      gap: scaleWidth(10),
+    },
+    exerciseNameInput: {
+      flex: isLargeScreen ? 2 : 0,
+      backgroundColor: '#FFFFFF',
+      borderRadius: scaleWidth(8),
+      borderWidth: 1,
+      borderColor: '#D9D9D9',
+      padding: padding * 0.75,
+      fontFamily: 'Poppins',
+      fontSize: getResponsiveFontSize(15),
+    },
+    setsRepsInput: {
+      flex: isLargeScreen ? 1 : 0,
+      backgroundColor: '#FFFFFF',
+      borderRadius: scaleWidth(8),
+      borderWidth: 1,
+      borderColor: '#D9D9D9',
+      padding: padding * 0.75,
+      fontFamily: 'Poppins',
+      fontSize: getResponsiveFontSize(15),
+    },
+    addExerciseButton: {
+      backgroundColor: '#28A745',
+      borderRadius: scaleWidth(8),
+      paddingHorizontal: padding,
+      justifyContent: 'center',
+    },
+    addExerciseButtonText: {
+      color: '#FFFFFF',
+      fontFamily: 'Poppins',
+      fontSize: getResponsiveFontSize(15),
+      fontWeight: '600',
+    },
+    exercisesList: {
+      marginBottom: margin * 1.25,
+    },
+    exerciseHeader: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      paddingVertical: scaleHeight(10),
+      borderBottomWidth: 1,
+      borderBottomColor: '#737373',
+    },
+    exerciseHeaderText: {
+      fontFamily: 'Poppins',
+      fontSize: getResponsiveFontSize(18),
+      fontWeight: '600',
+      color: '#333333',
+      flex: 1,
+    },
+    exerciseRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: scaleHeight(12),
+      borderBottomWidth: 1,
+      borderBottomColor: '#737373',
+    },
+    exerciseName: {
+      fontFamily: 'Poppins',
+      fontSize: getResponsiveFontSize(18),
+      fontWeight: '500',
+      color: '#333333',
+      flex: 1,
+    },
+    setsRepsBox: {
+      backgroundColor: '#FFFFFF',
+      borderWidth: 1,
+      borderColor: '#28A745',
+      borderRadius: scaleWidth(5),
+      padding: scaleWidth(8),
+      marginHorizontal: scaleWidth(5),
+      minWidth: scaleWidth(50),
+    },
+    setsRepsText: {
+      fontFamily: 'Poppins',
+      fontSize: getResponsiveFontSize(15),
+      fontWeight: '600',
+      color: '#737373',
+      textAlign: 'center',
+    },
+    deleteExerciseButton: {
+      padding: scaleWidth(8),
+    },
+    deleteIcon: {
+      fontSize: getResponsiveIconSize(20),
+    },
+    addExerciseIconButton: {
+      width: scaleWidth(45),
+      height: scaleWidth(45),
+      borderRadius: scaleWidth(22.5),
+      backgroundColor: '#28A745',
+      justifyContent: 'center',
+      alignItems: 'center',
+      alignSelf: 'center',
+      marginVertical: margin * 1.25,
+    },
+    notesContainer: {
+      backgroundColor: '#FFFFFF',
+      borderRadius: scaleWidth(8),
+      borderWidth: 1,
+      borderColor: '#D9D9D9',
+      padding: padding,
+      marginBottom: margin * 1.25,
+      minHeight: scaleHeight(160),
+    },
+    notesInput: {
+      fontFamily: 'Poppins',
+      fontSize: getResponsiveFontSize(15),
+      color: '#737373',
+      minHeight: scaleHeight(100),
+      textAlignVertical: 'top',
+    },
+    wordsRemaining: {
+      fontFamily: 'Poppins',
+      fontSize: getResponsiveFontSize(15),
+      color: '#FF9933',
+      textAlign: 'right',
+      marginTop: scaleHeight(10),
+    },
+    submitButton: {
+      backgroundColor: '#28A745',
+      borderRadius: scaleWidth(15),
+      padding: padding * 0.9375,
+      alignItems: 'center',
+      marginBottom: margin * 2.5,
+    },
+    submitButtonText: {
+      fontFamily: 'Roboto Flex',
+      fontSize: getResponsiveFontSize(25),
+      fontWeight: '600',
+      color: '#FFFFFF',
+    },
+  });
+};
+
+const styles = getStyles();
 
 export default AddWorkoutPlanScreen;
 

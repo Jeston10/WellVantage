@@ -6,8 +6,23 @@ import {
   StyleSheet,
   SafeAreaView,
   ActivityIndicator,
+  Dimensions,
 } from 'react-native';
 import { useAuth } from '../context/AuthContext';
+import {
+  scaleWidth,
+  scaleHeight,
+  getResponsiveFontSize,
+  getResponsivePadding,
+  getResponsiveMargin,
+  getResponsiveButtonHeight,
+  getMaxContentWidth,
+  isTablet,
+  isDesktop,
+} from '../utils/responsive';
+
+// Use responsive utilities for screen width
+const getScreenWidth = () => Dimensions.get('window').width;
 
 const AuthScreen = () => {
   const { continueAsGuest } = useAuth();
@@ -25,9 +40,12 @@ const AuthScreen = () => {
   };
 
 
+  const maxWidth = getMaxContentWidth();
+  const isLargeScreen = isTablet() || isDesktop();
+
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.content}>
+      <View style={[styles.content, isLargeScreen && { maxWidth, alignSelf: 'center', width: '100%' }]}>
         <Text style={styles.title}>Sign Up</Text>
         
         <Text style={styles.welcomeText}>
@@ -50,56 +68,65 @@ const AuthScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
-  content: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-  },
-  title: {
-    fontFamily: 'Poppins',
-    fontSize: 25,
-    fontWeight: '600',
-    color: '#333333',
-    marginBottom: 40,
-    marginTop: 73,
-  },
-  welcomeText: {
-    fontFamily: 'Poppins',
-    fontSize: 25,
-    fontWeight: '600',
-    color: '#333333',
-    textAlign: 'center',
-    lineHeight: 35,
-    marginBottom: 100,
-    paddingHorizontal: 20,
-  },
-  guestButton: {
-    width: 300,
-    height: 50,
-    backgroundColor: '#28A745',
-    borderRadius: 8,
-    shadowColor: '#28A745',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 4,
-    elevation: 3,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-  },
-  guestButtonText: {
-    fontFamily: 'Poppins',
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#FFFFFF',
-  },
-});
+const getStyles = () => {
+  const padding = getResponsivePadding();
+  const margin = getResponsiveMargin();
+  const buttonHeight = getResponsiveButtonHeight(50);
+  const maxButtonWidth = isTablet() ? scaleWidth(400) : scaleWidth(300);
+  
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: '#FFFFFF',
+    },
+    content: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingHorizontal: padding,
+    },
+    title: {
+      fontFamily: 'Poppins',
+      fontSize: getResponsiveFontSize(25),
+      fontWeight: '600',
+      color: '#333333',
+      marginBottom: margin * 2.5,
+      marginTop: scaleHeight(73),
+    },
+    welcomeText: {
+      fontFamily: 'Poppins',
+      fontSize: getResponsiveFontSize(isTablet() ? 28 : 25),
+      fontWeight: '600',
+      color: '#333333',
+      textAlign: 'center',
+      lineHeight: getResponsiveFontSize(35),
+      marginBottom: margin * 6,
+      paddingHorizontal: padding,
+    },
+    guestButton: {
+      width: Math.min(maxButtonWidth, getScreenWidth() - padding * 2),
+      height: buttonHeight,
+      backgroundColor: '#28A745',
+      borderRadius: scaleWidth(8),
+      shadowColor: '#28A745',
+      shadowOffset: { width: 0, height: scaleHeight(2) },
+      shadowOpacity: 0.3,
+      shadowRadius: scaleWidth(4),
+      elevation: 3,
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingHorizontal: padding,
+    },
+    guestButtonText: {
+      fontFamily: 'Poppins',
+      fontSize: getResponsiveFontSize(16),
+      fontWeight: '600',
+      color: '#FFFFFF',
+    },
+  });
+};
+
+const styles = getStyles();
 
 export default AuthScreen;
 

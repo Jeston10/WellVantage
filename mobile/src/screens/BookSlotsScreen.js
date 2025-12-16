@@ -7,11 +7,28 @@ import {
   SafeAreaView,
   ScrollView,
   Alert,
+  Dimensions,
+  Platform,
 } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { useNavigation } from '@react-navigation/native';
 import api from '../config/api';
 import Sidebar from '../components/Sidebar';
+import {
+  scaleWidth,
+  scaleHeight,
+  getResponsiveFontSize,
+  getResponsivePadding,
+  getResponsiveMargin,
+  getResponsiveIconSize,
+  getResponsiveHeaderHeight,
+  getMaxContentWidth,
+  isTablet,
+  isDesktop,
+} from '../utils/responsive';
+
+// Use responsive utilities for screen width
+const getScreenWidth = () => Dimensions.get('window').width;
 
 const BookSlotsScreen = () => {
   const navigation = useNavigation();
@@ -230,71 +247,77 @@ const BookSlotsScreen = () => {
       />
 
       {/* Navigation Tabs */}
-      <View style={styles.tabsContainer}>
-        <TouchableOpacity
-          style={[styles.tab, activeTab === 'Workout' && styles.activeTab]}
-          onPress={() => {
-            setActiveTab('Workout');
-            navigation.navigate('WorkoutManagement');
-          }}
+      <View style={styles.tabsWrapper}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.tabsContainer}
         >
-          <Text
-            style={[
-              styles.tabText,
-              activeTab === 'Workout' && styles.activeTabText,
-            ]}
+          <TouchableOpacity
+            style={[styles.tab, activeTab === 'Workout' && styles.activeTab]}
+            onPress={() => {
+              setActiveTab('Workout');
+              navigation.navigate('WorkoutManagement');
+            }}
           >
-            Workout
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.tab, activeTab === 'Client' && styles.activeTab]}
-          onPress={() => {
-            setActiveTab('Client');
-            navigation.navigate('WorkoutManagement');
-          }}
-        >
-          <Text
-            style={[
-              styles.tabText,
-              activeTab === 'Client' && styles.activeTabText,
-            ]}
+            <Text
+              style={[
+                styles.tabText,
+                activeTab === 'Workout' && styles.activeTabText,
+              ]}
+            >
+              Workout
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.tab, activeTab === 'Client' && styles.activeTab]}
+            onPress={() => {
+              setActiveTab('Client');
+              navigation.navigate('WorkoutManagement');
+            }}
           >
-            Client
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.tab, activeTab === 'Availability' && styles.activeTab]}
-          onPress={() => {
-            setActiveTab('Availability');
-            navigation.navigate('SetAvailability');
-          }}
-        >
-          <Text
-            style={[
-              styles.tabText,
-              activeTab === 'Availability' && styles.activeTabText,
-            ]}
+            <Text
+              style={[
+                styles.tabText,
+                activeTab === 'Client' && styles.activeTabText,
+              ]}
+            >
+              Client
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.tab, activeTab === 'Availability' && styles.activeTab]}
+            onPress={() => {
+              setActiveTab('Availability');
+              navigation.navigate('SetAvailability');
+            }}
           >
-            Availability
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.tab, activeTab === 'BookSlots' && styles.activeTab]}
-          onPress={() => setActiveTab('BookSlots')}
-        >
-          <Text
-            style={[
-              styles.tabText,
-              activeTab === 'BookSlots' && styles.activeTabText,
-            ]}
+            <Text
+              style={[
+                styles.tabText,
+                activeTab === 'Availability' && styles.activeTabText,
+              ]}
+            >
+              Availability
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.tab, activeTab === 'BookSlots' && styles.activeTab]}
+            onPress={() => setActiveTab('BookSlots')}
           >
-            Book Slots
-          </Text>
-        </TouchableOpacity>
+            <Text
+              style={[
+                styles.tabText,
+                activeTab === 'BookSlots' && styles.activeTabText,
+              ]}
+            >
+              Book Slots
+            </Text>
+          </TouchableOpacity>
+        </ScrollView>
       </View>
 
-      <ScrollView style={styles.content}>
+      <ScrollView style={[styles.content, (isTablet() || isDesktop()) && { maxWidth: getMaxContentWidth(), alignSelf: 'center', width: '100%' }]}>
         <Text style={styles.title}>Book Client Slots</Text>
         <Text style={styles.subtitle}>
           Rahul Verma has 20 sessions left to book by 24 June 2026.
@@ -429,245 +452,262 @@ const BookSlotsScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#FFFFFF',
-  },
-  header: {
-    backgroundColor: '#28A745',
-    height: 60,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-  },
-  menuButton: {
-    width: 35,
-    height: 35,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  menuIcon: {
-    color: '#FFFFFF',
-    fontSize: 24,
-  },
-  headerTitle: {
-    fontFamily: 'Poppins',
-    fontSize: 21,
-    fontWeight: '600',
-    color: '#FFFFFF',
-  },
-  refreshIcon: {
-    color: '#FFFFFF',
-    fontSize: 24,
-  },
-  tabsContainer: {
-    flexDirection: 'row',
-    paddingHorizontal: 25,
-    paddingTop: 20,
-    borderBottomWidth: 1,
-    borderBottomColor: '#737373',
-  },
-  tab: {
-    marginRight: 30,
-    paddingBottom: 8,
-  },
-  activeTab: {
-    borderBottomWidth: 4,
-    borderBottomColor: '#28A745',
-  },
-  tabText: {
-    fontFamily: 'Poppins',
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#333333',
-  },
-  activeTabText: {
-    color: '#28A745',
-  },
-  content: {
-    flex: 1,
-    padding: 16,
-  },
-  title: {
-    fontFamily: 'Poppins',
-    fontSize: 24,
-    fontWeight: '600',
-    color: '#333333',
-    marginBottom: 10,
-  },
-  subtitle: {
-    fontFamily: 'Poppins',
-    fontSize: 16,
-    color: '#333333',
-    marginBottom: 20,
-  },
-  slotsTitle: {
-    fontFamily: 'Poppins',
-    fontSize: 18,
-    fontWeight: '600',
-    color: '#333333',
-    marginTop: 20,
-    marginBottom: 10,
-  },
-  selectedDatesInfo: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 15,
-    padding: 12,
-    backgroundColor: '#E8F5E9',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#28A745',
-  },
-  selectedDatesText: {
-    fontFamily: 'Poppins',
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#28A745',
-  },
-  clearDatesButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: '#28A745',
-  },
-  clearDatesButtonText: {
-    fontFamily: 'Poppins',
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#28A745',
-  },
-  bulkBookingContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: 15,
-    marginBottom: 15,
-    padding: 12,
-    backgroundColor: '#FFF3CD',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#FFC107',
-    gap: 10,
-  },
-  bulkBookingText: {
-    fontFamily: 'Poppins',
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#856404',
-    flex: 1,
-  },
-  bulkBookButton: {
-    backgroundColor: '#28A745',
-    borderRadius: 6,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-  },
-  bulkBookButtonText: {
-    fontFamily: 'Poppins',
-    fontSize: 14,
-    fontWeight: '600',
-    color: '#FFFFFF',
-  },
-  clearSlotsButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    backgroundColor: '#FFFFFF',
-    borderRadius: 6,
-    borderWidth: 1,
-    borderColor: '#856404',
-  },
-  clearSlotsButtonText: {
-    fontFamily: 'Poppins',
-    fontSize: 14,
-    fontWeight: '500',
-    color: '#856404',
-  },
-  slotItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 15,
-    gap: 10,
-  },
-  slotItemSelected: {
-    backgroundColor: '#E8F5E9',
-    borderRadius: 8,
-    padding: 4,
-  },
-  slotItemBooked: {
-    opacity: 0.6,
-  },
-  slotCheckbox: {
-    width: 30,
-    height: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  checkboxText: {
-    fontSize: 20,
-    color: '#28A745',
-  },
-  slotTimeContainer: {
-    flex: 1,
-    backgroundColor: '#E8F5E9',
-    borderWidth: 1,
-    borderColor: '#28A745',
-    borderRadius: 8,
-    padding: 12,
-  },
-  slotTime: {
-    fontFamily: 'Poppins',
-    fontSize: 15,
-    fontWeight: '500',
-    color: '#333333',
-  },
-  slotDate: {
-    fontFamily: 'Poppins',
-    fontSize: 12,
-    color: '#737373',
-    marginTop: 4,
-  },
-  noSlotsText: {
-    fontFamily: 'Poppins',
-    fontSize: 16,
-    color: '#737373',
-    textAlign: 'center',
-    marginTop: 20,
-    fontStyle: 'italic',
-  },
-  statusButton: {
-    backgroundColor: '#E8F5E9',
-    borderWidth: 1,
-    borderColor: '#28A745',
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-  },
-  statusButtonBooked: {
-    backgroundColor: '#D9D9D9',
-    borderColor: '#737373',
-  },
-  statusText: {
-    fontFamily: 'Poppins',
-    fontSize: 15,
-    fontWeight: '500',
-    color: '#28A745',
-  },
-  statusTextBooked: {
-    color: '#737373',
-  },
-  deleteButton: {
-    padding: 8,
-  },
-  deleteIcon: {
-    fontSize: 20,
-  },
-});
+const getStyles = () => {
+  const padding = getResponsivePadding();
+  const margin = getResponsiveMargin();
+  const headerHeight = getResponsiveHeaderHeight();
+  const isLargeScreen = isTablet() || isDesktop();
+  
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: '#FFFFFF',
+    },
+    header: {
+      backgroundColor: '#28A745',
+      height: headerHeight,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingHorizontal: getResponsivePadding(16),
+    },
+    menuButton: {
+      width: scaleWidth(35),
+      height: scaleWidth(35),
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    menuIcon: {
+      color: '#FFFFFF',
+      fontSize: getResponsiveIconSize(24),
+    },
+    headerTitle: {
+      fontFamily: 'Poppins',
+      fontSize: getResponsiveFontSize(21),
+      fontWeight: '600',
+      color: '#FFFFFF',
+    },
+    refreshIcon: {
+      color: '#FFFFFF',
+      fontSize: getResponsiveIconSize(24),
+    },
+    tabsWrapper: {
+      borderBottomWidth: 1,
+      borderBottomColor: '#737373',
+    },
+    tabsContainer: {
+      flexDirection: 'row',
+      paddingLeft: getResponsivePadding(20),
+      paddingRight: getResponsivePadding(20),
+      paddingTop: getResponsivePadding(20),
+      paddingBottom: scaleHeight(8),
+      alignItems: 'center',
+      minHeight: scaleHeight(50),
+    },
+    tab: {
+      marginRight: scaleWidth(25),
+      paddingBottom: scaleHeight(8),
+      paddingHorizontal: scaleWidth(8),
+      minWidth: scaleWidth(60),
+    },
+    activeTab: {
+      borderBottomWidth: scaleHeight(4),
+      borderBottomColor: '#28A745',
+    },
+    tabText: {
+      fontFamily: 'Poppins',
+      fontSize: getResponsiveFontSize(18),
+      fontWeight: '600',
+      color: '#333333',
+    },
+    activeTabText: {
+      color: '#28A745',
+    },
+    content: {
+      flex: 1,
+      padding: padding,
+    },
+    title: {
+      fontFamily: 'Poppins',
+      fontSize: getResponsiveFontSize(24),
+      fontWeight: '600',
+      color: '#333333',
+      marginBottom: margin,
+    },
+    subtitle: {
+      fontFamily: 'Poppins',
+      fontSize: getResponsiveFontSize(16),
+      color: '#333333',
+      marginBottom: margin * 1.25,
+    },
+    slotsTitle: {
+      fontFamily: 'Poppins',
+      fontSize: getResponsiveFontSize(18),
+      fontWeight: '600',
+      color: '#333333',
+      marginTop: margin * 1.25,
+      marginBottom: margin,
+    },
+    selectedDatesInfo: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: margin,
+      padding: padding * 0.75,
+      backgroundColor: '#E8F5E9',
+      borderRadius: scaleWidth(8),
+      borderWidth: 1,
+      borderColor: '#28A745',
+    },
+    selectedDatesText: {
+      fontFamily: 'Poppins',
+      fontSize: getResponsiveFontSize(16),
+      fontWeight: '500',
+      color: '#28A745',
+    },
+    clearDatesButton: {
+      paddingHorizontal: padding * 0.75,
+      paddingVertical: scaleHeight(6),
+      backgroundColor: '#FFFFFF',
+      borderRadius: scaleWidth(6),
+      borderWidth: 1,
+      borderColor: '#28A745',
+    },
+    clearDatesButtonText: {
+      fontFamily: 'Poppins',
+      fontSize: getResponsiveFontSize(14),
+      fontWeight: '500',
+      color: '#28A745',
+    },
+    bulkBookingContainer: {
+      flexDirection: isLargeScreen ? 'row' : 'column',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginTop: margin,
+      marginBottom: margin,
+      padding: padding * 0.75,
+      backgroundColor: '#FFF3CD',
+      borderRadius: scaleWidth(8),
+      borderWidth: 1,
+      borderColor: '#FFC107',
+      gap: scaleWidth(10),
+    },
+    bulkBookingText: {
+      fontFamily: 'Poppins',
+      fontSize: getResponsiveFontSize(16),
+      fontWeight: '500',
+      color: '#856404',
+      flex: isLargeScreen ? 1 : 0,
+    },
+    bulkBookButton: {
+      backgroundColor: '#28A745',
+      borderRadius: scaleWidth(6),
+      paddingHorizontal: padding,
+      paddingVertical: scaleHeight(8),
+    },
+    bulkBookButtonText: {
+      fontFamily: 'Poppins',
+      fontSize: getResponsiveFontSize(14),
+      fontWeight: '600',
+      color: '#FFFFFF',
+    },
+    clearSlotsButton: {
+      paddingHorizontal: padding * 0.75,
+      paddingVertical: scaleHeight(8),
+      backgroundColor: '#FFFFFF',
+      borderRadius: scaleWidth(6),
+      borderWidth: 1,
+      borderColor: '#856404',
+    },
+    clearSlotsButtonText: {
+      fontFamily: 'Poppins',
+      fontSize: getResponsiveFontSize(14),
+      fontWeight: '500',
+      color: '#856404',
+    },
+    slotItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: margin,
+      gap: scaleWidth(10),
+    },
+    slotItemSelected: {
+      backgroundColor: '#E8F5E9',
+      borderRadius: scaleWidth(8),
+      padding: scaleWidth(4),
+    },
+    slotItemBooked: {
+      opacity: 0.6,
+    },
+    slotCheckbox: {
+      width: scaleWidth(30),
+      height: scaleWidth(30),
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    checkboxText: {
+      fontSize: getResponsiveIconSize(20),
+      color: '#28A745',
+    },
+    slotTimeContainer: {
+      flex: 1,
+      backgroundColor: '#E8F5E9',
+      borderWidth: 1,
+      borderColor: '#28A745',
+      borderRadius: scaleWidth(8),
+      padding: padding * 0.75,
+    },
+    slotTime: {
+      fontFamily: 'Poppins',
+      fontSize: getResponsiveFontSize(15),
+      fontWeight: '500',
+      color: '#333333',
+    },
+    slotDate: {
+      fontFamily: 'Poppins',
+      fontSize: getResponsiveFontSize(12),
+      color: '#737373',
+      marginTop: scaleHeight(4),
+    },
+    noSlotsText: {
+      fontFamily: 'Poppins',
+      fontSize: getResponsiveFontSize(16),
+      color: '#737373',
+      textAlign: 'center',
+      marginTop: margin * 1.25,
+      fontStyle: 'italic',
+    },
+    statusButton: {
+      backgroundColor: '#E8F5E9',
+      borderWidth: 1,
+      borderColor: '#28A745',
+      borderRadius: scaleWidth(8),
+      paddingHorizontal: padding,
+      paddingVertical: scaleHeight(12),
+    },
+    statusButtonBooked: {
+      backgroundColor: '#D9D9D9',
+      borderColor: '#737373',
+    },
+    statusText: {
+      fontFamily: 'Poppins',
+      fontSize: getResponsiveFontSize(15),
+      fontWeight: '500',
+      color: '#28A745',
+    },
+    statusTextBooked: {
+      color: '#737373',
+    },
+    deleteButton: {
+      padding: scaleWidth(8),
+    },
+    deleteIcon: {
+      fontSize: getResponsiveIconSize(20),
+    },
+  });
+};
+
+const styles = getStyles();
 
 export default BookSlotsScreen;
 

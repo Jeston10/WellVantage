@@ -1,0 +1,35 @@
+{
+  "expo": {
+    "name": "WellVantage",
+    "slug": "wellvantage",
+    "scheme": "wellvantage",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "backgroundColor": "#28A745",
+      "resizeMode": "contain"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.wellvantage.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#28A745"
+      },
+      "package": "com.wellvantage.app"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "66b13fc4-8860-4b8d-927c-3bafed4cf7ad"
+      }
+    },
+    "plugins": [
+      "expo-font"
+    ]
+  }
+}
